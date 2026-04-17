@@ -35,7 +35,7 @@ CLAUDE_BIN = HOME / ".local" / "bin" / "claude"
 
 POLL_INTERVAL_SEC = 2.0
 TRIGGER_RE = re.compile(r"\bclaude\b", re.IGNORECASE)
-CONTEXT_MESSAGES = 3
+CONTEXT_MESSAGES = 10
 CLAUDE_TIMEOUT_SEC = 90
 
 SYSTEM_PROMPT = (
