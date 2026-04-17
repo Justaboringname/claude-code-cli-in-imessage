@@ -22,7 +22,6 @@ import sqlite3
 import subprocess
 import sys
 import time
-from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -32,12 +31,12 @@ STATE_DIR = HOME / ".config" / "imessage-claude-bot"
 STATE_FILE = STATE_DIR / "state.json"
 LOG_FILE = STATE_DIR / "bot.log"
 
+CLAUDE_BIN = HOME / ".local" / "bin" / "claude"
+
 POLL_INTERVAL_SEC = 2.0
 TRIGGER_RE = re.compile(r"\bclaude\b", re.IGNORECASE)
 CONTEXT_MESSAGES = 3
 CLAUDE_TIMEOUT_SEC = 90
-PER_CHAT_HOURLY_LIMIT = 10
-GLOBAL_HOURLY_LIMIT = 30
 
 SYSTEM_PROMPT = (
     "You are replying through iMessage. Keep replies short (1-3 sentences). "
@@ -70,7 +69,7 @@ class Message:
 def load_state() -> dict:
     if STATE_FILE.exists():
         return json.loads(STATE_FILE.read_text())
-    return {"last_rowid": 0, "reply_log": []}
+    return {"last_rowid": 0}
 
 
 def save_state(state: dict) -> None:
@@ -152,29 +151,12 @@ def fetch_recent_context(chat_identifier: str, before_rowid: int, limit: int) ->
     return [r["text"] for r in reversed(rows)]
 
 
-def under_rate_limit(state: dict, chat_identifier: str) -> bool:
-    cutoff = time.time() - 3600
-    state["reply_log"] = [(t, c) for (t, c) in state["reply_log"] if t > cutoff]
-    if len(state["reply_log"]) >= GLOBAL_HOURLY_LIMIT:
-        logging.warning("global hourly limit hit (%d) — skipping", GLOBAL_HOURLY_LIMIT)
-        return False
-    per_chat = sum(1 for (_, c) in state["reply_log"] if c == chat_identifier)
-    if per_chat >= PER_CHAT_HOURLY_LIMIT:
-        logging.warning("per-chat limit hit for %s — skipping", chat_identifier)
-        return False
-    return True
-
-
-def record_reply(state: dict, chat_identifier: str) -> None:
-    state["reply_log"].append((time.time(), chat_identifier))
-
-
 def call_claude(prompt: str) -> str | None:
     cmd = [
-        "claude",
+        str(CLAUDE_BIN),
         "-p",
         "--no-session-persistence",
-        "--effort", "medium",
+        "--effort", "xhigh",
         "--model", "opus",
         "--output-format", "text",
         "--tools", "",
@@ -252,8 +234,6 @@ def handle(message: Message, state: dict) -> None:
     if not message.chat_identifier:
         logging.warning("no chat_identifier for rowid=%d, skipping", message.rowid)
         return
-    if not under_rate_limit(state, message.chat_identifier):
-        return
 
     logging.info("triggered: rowid=%d from=%s text=%r", message.rowid, message.sender, message.text[:120])
     context = fetch_recent_context(message.chat_identifier, message.rowid, CONTEXT_MESSAGES)
@@ -265,7 +245,6 @@ def handle(message: Message, state: dict) -> None:
         return
 
     if send_imessage(message.chat_identifier, reply):
-        record_reply(state, message.chat_identifier)
         logging.info("replied to %s: %r", message.chat_identifier, reply[:120])
     else:
         logging.error("send failed for rowid=%d", message.rowid)
