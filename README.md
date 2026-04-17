@@ -33,8 +33,10 @@ the trigger word loop.
 - **Text column only.** macOS 14+ stores some messages in `attributedBody`
   (a binary plist). Those will be silently skipped — the trigger word
   needs to land in `text`. Good enough for plain typed messages.
-- **Rate limited.** Default: 10 replies/hour per chat, 30/hour total —
-  to protect your Claude Code subscription's 5-hour rolling cap.
+- **No rate limit.** Replies fire as fast as `claude -p` returns. Be
+  aware your Claude Code subscription has a 5-hour rolling cap — if a
+  group of friends start spamming the trigger word it can burn through
+  fast. Add a guard back if you need one.
 - **No tool use.** Replies are pure text; the model can't browse or run
   code. Tweak `SYSTEM_PROMPT` and the `--tools` flag in `bot.py` if
   you want otherwise.
@@ -109,9 +111,8 @@ Edit constants at the top of `bot.py`:
 | `TRIGGER_RE` | `\bclaude\b` (case-insensitive) | Trigger pattern |
 | `CONTEXT_MESSAGES` | `3` | Recent user messages included as context |
 | `CLAUDE_TIMEOUT_SEC` | `90` | Per-call timeout |
-| `PER_CHAT_HOURLY_LIMIT` | `10` | Replies/hour per chat |
-| `GLOBAL_HOURLY_LIMIT` | `30` | Replies/hour total |
 | `SYSTEM_PROMPT` | (see file) | Prepended to every call |
+| `CLAUDE_BIN` | `~/.local/bin/claude` | Absolute path to the `claude` CLI binary |
 
 After changing, reload:
 
@@ -127,7 +128,8 @@ Access not granted to `/usr/bin/python3`.
 
 **Nothing happens when I text "claude ..."** — Tail `bot.log`. Common
 causes: message landed in `attributedBody` (text column NULL — see
-Scope), bot is in a group chat (skipped by design), or rate-limited.
+Scope), bot is in a group chat (skipped by design), or `claude` CLI
+not at `~/.local/bin/claude` (update `CLAUDE_BIN` in `bot.py`).
 
 **Bot replies feel slow** — `claude -p` cold-start is a few seconds.
 Drop `--effort` from `medium` to `low` in `bot.py` for snappier (but
