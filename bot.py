@@ -269,6 +269,11 @@ def main() -> None:
                 save_state(state)
         except sqlite3.OperationalError as e:
             logging.warning("sqlite error (likely permission or busy): %s", e)
+        except sqlite3.DatabaseError as e:
+            if "authorization denied" in str(e):
+                logging.error("sqlite authorization denied — TCC stale (likely post-sleep), exiting for launchd restart")
+                sys.exit(1)
+            logging.exception("sqlite database error")
         except Exception:
             logging.exception("unexpected error in poll loop")
         time.sleep(POLL_INTERVAL_SEC)
