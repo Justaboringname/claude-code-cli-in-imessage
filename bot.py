@@ -39,7 +39,7 @@ CONTEXT_MESSAGES = 3
 CLAUDE_TIMEOUT_SEC = 90
 
 SYSTEM_PROMPT = (
-    "You are replying through iMessage. Keep replies short (1-3 sentences). "
+    "You are replying through iMessage. Keep replies under 100 sentences. "
     "Match the user's language. No markdown, no code blocks unless asked. "
     "You have no tools and cannot browse — answer from general knowledge."
 )
