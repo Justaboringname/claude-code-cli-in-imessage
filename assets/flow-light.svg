@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="340" viewBox="0 0 1280 340" role="img" aria-labelledby="t">
+<title id="t">How it works: chat.db is polled every 2 seconds; a new message that matches the word claude, is not from me and is in a 1-on-1 chat triggers the bot; claude -p drafts a reply with recent messages from the same chat as context; osascript sends it through Messages.app to the original sender. The reply lands in chat.db with is_from_me = 1, so it never retriggers the bot.</title>
+<style>
+.sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.tx { fill: #1f1e1c; }
+.mu { fill: #6f6d66; }
+.clay { fill: #b3532f; }
+.sage { fill: #5f7347; }
+.eyebrow { font-size: 22px; letter-spacing: 4px; }
+.title { font-weight: 700; letter-spacing: -1.5px; }
+.tag { font-size: 28px; }
+.node { font-size: 24px; font-weight: 600; }
+.sub { font-size: 22px; }
+.cap { font-size: 22px; }
+.small { font-size: 20px; }
+.num { font-variant-numeric: tabular-nums; }
+</style>
+<rect x="0.5" y="0.5" width="1279" height="339" rx="20" fill="#faf9f5" stroke="#e6e3d9" stroke-width="1"/>
+<g fill="none" stroke="#c4bfb2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M316.0 136.0 H354.0"/>
+</g>
+<path d="M361.0 136.0 L352.6 130.0 L352.6 142.0 Z" fill="#c4bfb2"/>
+<g fill="none" stroke="#c4bfb2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M618.0 136.0 H656.0"/>
+</g>
+<path d="M663.0 136.0 L654.6 130.0 L654.6 142.0 Z" fill="#c4bfb2"/>
+<g fill="none" stroke="#c4bfb2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M920.0 136.0 H958.0"/>
+</g>
+<path d="M965.0 136.0 L956.6 130.0 L956.6 142.0 Z" fill="#c4bfb2"/>
+<text class="mono cap mu" x="64.0" y="64">poll · 2s</text>
+<rect x="62.0" y="86" width="250" height="100" rx="14" fill="#ffffff" stroke="#dedacf" stroke-width="1.5"/>
+<circle cx="84.0" cy="118" r="5" fill="#5f7347"/>
+<text class="sans node tx" x="98.0" y="126">chat.db</text>
+<text class="sans sub mu" x="98.0" y="158">new messages</text>
+<text class="mono cap clay" x="366.0" y="64">\bclaude\b</text>
+<rect x="364.0" y="86" width="250" height="100" rx="14" fill="#ffffff" stroke="#dedacf" stroke-width="1.5"/>
+<circle cx="386.0" cy="118" r="5" fill="#b3532f"/>
+<text class="sans node tx" x="400.0" y="126">Trigger</text>
+<text class="sans sub mu" x="400.0" y="158">1-on-1 only</text>
+<text class="mono cap mu" x="668.0" y="64">--tools ""</text>
+<rect x="666.0" y="86" width="250" height="100" rx="14" fill="#ffffff" stroke="#dedacf" stroke-width="1.5"/>
+<circle cx="688.0" cy="118" r="5" fill="#5f7347"/>
+<text class="sans node tx" x="702.0" y="126">claude -p</text>
+<text class="sans sub mu" x="702.0" y="158">+ recent context</text>
+<text class="mono cap mu" x="970.0" y="64">osascript</text>
+<rect x="968.0" y="86" width="250" height="100" rx="14" fill="#ffffff" stroke="#dedacf" stroke-width="1.5"/>
+<circle cx="990.0" cy="118" r="5" fill="#5f7347"/>
+<text class="sans node tx" x="1004.0" y="126">Messages.app</text>
+<text class="sans sub mu" x="1004.0" y="158">to the sender</text>
+<path d="M1093.0 190 V228 Q1093.0 244 1077.0 244 H203.0 Q187.0 244 187.0 228 V198" fill="none" stroke="#c4bfb2" stroke-width="2" stroke-dasharray="7 7" stroke-linecap="round"/>
+<path d="M187.0 190 L181.0 198.4 L193.0 198.4 Z" fill="#c4bfb2"/>
+<text class="mono cap mu" x="640.0" y="288" text-anchor="middle">own replies: is_from_me = 1 → never retrigger</text>
+</svg>
