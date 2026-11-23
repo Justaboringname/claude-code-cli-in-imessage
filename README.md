@@ -35,9 +35,9 @@ iMessage arrives
    ↓ (chat.db poll, 2s)
 match "\bclaude\b" in text, is_from_me = 0, 1v1 only
    ↓
-fetch last 3 user messages in same chat (context)
+fetch last 10 user messages in same chat (context)
    ↓
-claude -p --tools "" --effort medium --model opus ...
+claude -p --tools "" --effort xhigh --model opus ...
    ↓
 osascript → Messages.app → send to original buddy
 ```
@@ -117,7 +117,7 @@ Edit the constants at the top of `bot.py`:
 |:--|:--|:--|
 | `POLL_INTERVAL_SEC` | `2.0` | How often to check chat.db |
 | `TRIGGER_RE` | `\bclaude\b` (case-insensitive) | Trigger pattern |
-| `CONTEXT_MESSAGES` | `3` | Recent user messages included as context |
+| `CONTEXT_MESSAGES` | `10` | Recent user messages included as context |
 | `CLAUDE_TIMEOUT_SEC` | `90` | Per-call timeout |
 | `SYSTEM_PROMPT` | (see file) | Prepended to every call |
 | `CLAUDE_BIN` | `~/.local/bin/claude` | Absolute path to the `claude` CLI binary |
@@ -135,7 +135,7 @@ launchctl load   ~/Library/LaunchAgents/com.user.imessage-claude-bot.plist
 - **Nothing happens when I text "claude ...".** Tail `bot.log`. Common causes: the message landed in `attributedBody` (text
   column NULL, see [Scope and limits](#scope-and-limits)), the bot is in a group chat (skipped by design), or the `claude`
   CLI is not at `~/.local/bin/claude` (update `CLAUDE_BIN` in `bot.py`).
-- **Bot replies feel slow.** `claude -p` cold-start is a few seconds. Drop `--effort` from `medium` to `low` in `bot.py` for
-  snappier (but shallower) replies.
+- **Bot replies feel slow.** `claude -p` cold-start is a few seconds. Lower `--effort` in `bot.py` from `xhigh` to `medium` or
+  `low` for snappier (but shallower) replies.
 - **Bot replies to my own outgoing messages.** Shouldn't happen (`is_from_me = 0` filter). If it does, file an issue with a
   `bot.log` excerpt.
